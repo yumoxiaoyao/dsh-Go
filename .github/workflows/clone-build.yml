@@ -12,7 +12,7 @@ jobs:
           sed -i 's/MIN_OPACITY = 0\.3f/MIN_OPACITY = 0f/' $k/OverlayPrefs.kt
           sed -i 's|^        view.setLook(dark, seed)$|        if (true) return false\n        view.setLook(dark, seed)|' $k/EdgeBeam.kt
           f=runtime/build-runtime.sh
-          sed -i -e 's|mirrors.tuna.tsinghua.edu.cn/ubuntu-cdimage|cdimage.ubuntu.com|' -e 's|mirrors.tuna.tsinghua.edu.cn/ubuntu-ports|ports.ubuntu.com|' -e 's|mirrors.tuna.tsinghua.edu.cn/ubuntu|archive.ubuntu.com/ubuntu|' -e 's|npmmirror.com/mirrors/node|nodejs.org/dist|' -e 's|registry.npmmirror.com|registry.npmjs.org|g' $f
+          sed -i -e 's|mirrors.tuna.tsinghua.edu.cn/ubuntu-cdimage|cdimage.ubuntu.com|' -e 's|mirrors.tuna.tsinghua.edu.cn/ubuntu-ports|ports.ubuntu.com|' -e 's|npmmirror.com/mirrors/node|nodejs.org/dist|' -e 's|registry.npmmirror.com|registry.npmjs.org|g' $f
       - uses: actions/setup-java@v4
         with: {distribution: temurin, java-version: '17'}
       - uses: subosito/flutter-action@v2
@@ -20,7 +20,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with: {gradle-version: 9.3.1}
       - run: printf 'sdk.dir=%s\nflutter.sdk=%s\n' "$ANDROID_HOME" "$FLUTTER_ROOT" > app/android/local.properties
-      - run: yes | sdkmanager --licenses >/dev/null || true; sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358"
+      - run: S=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager; yes | $S --licenses >/dev/null || true; $S "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358"
       - run: cd app/android && gradle wrapper --gradle-version 9.3.1
       - run: bash runtime/build-runtime.sh arm64-v8a
       - run: DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
