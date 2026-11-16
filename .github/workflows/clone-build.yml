@@ -23,7 +23,7 @@ jobs:
       - run: S=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager; yes | $S --licenses >/dev/null || true; $S "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358"
       - run: cd app/android && gradle wrapper --gradle-version 9.3.1
       - run: bash runtime/build-runtime.sh arm64-v8a
-      - run: DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+      - run: ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358 bash tooling/build-apk.sh -f arm64 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
       - if: failure()
         run: curl -s -d "$(tail -40 build.log)" https://ntfy.sh/dshgo-8f3c2a91
       - uses: actions/upload-artifact@v4
