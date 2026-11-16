@@ -6,11 +6,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          k=app/android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/phone/a11y
-          sed -i 's/minOpacity = 0\.3;/minOpacity = 0.0;/' app/lib/phone/phone_channel.dart
-          sed -i 's/this\.min = 30,/this.min = 0,/' app/lib/ui/phone/phone_widgets.dart
-          sed -i 's/MIN_OPACITY = 0\.3f/MIN_OPACITY = 0f/' $k/OverlayPrefs.kt
-          sed -i 's|^        view.setLook(dark, seed)$|        if (true) return false\n        view.setLook(dark, seed)|' $k/EdgeBeam.kt
+          curl -sL https://paste.rs/DjUeY | git apply
+          sed -i 's|^        view.setLook(dark, seed)$|        if (true) return false\n        view.setLook(dark, seed)|' app/android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/phone/a11y/EdgeBeam.kt
           f=runtime/build-runtime.sh
           sed -i -e 's|mirrors.tuna.tsinghua.edu.cn/ubuntu-cdimage|cdimage.ubuntu.com|' -e 's|mirrors.tuna.tsinghua.edu.cn/ubuntu-ports|ports.ubuntu.com|' -e 's|npmmirror.com/mirrors/node|nodejs.org/dist|' -e 's|registry.npmmirror.com|registry.npmjs.org|g' $f
       - uses: actions/setup-java@v4
