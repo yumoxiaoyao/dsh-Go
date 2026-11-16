@@ -1,0 +1,27 @@
+--- a//sdcard/Download/DSH-Go/clone-build.yml
++++ b//sdcard/Download/DSH-Go/clone-build.yml
+@@ -16,16 +16,22 @@
+     steps:
+       - uses: actions/checkout@v4
+ 
+-      - name: Apply opacity patch (0%-100%)
++      - name: Apply patches (opacity 0-100%, no edge glow)
+         run: |
+           set -e
++          # 1) 悬浮条不透明度下限 0.3 -> 0
+           sed -i 's/static const minOpacity = 0\.3;/static const minOpacity = 0.0;/' app/lib/phone/phone_channel.dart
++          # 2) 滑块最小值 30 -> 0
+           sed -i 's/this\.min = 30,/this.min = 0,/' app/lib/ui/phone/phone_widgets.dart
++          # 3) 原生侧下限 0.3f -> 0f
+           sed -i 's/MIN_OPACITY = 0\.3f/MIN_OPACITY = 0f/' app/android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/phone/a11y/OverlayPrefs.kt
+-          echo "--- 补丁后确认 ---"
++          # 4) 关闭屏幕边缘光效（EdgeBeam 不再添加窗口）
++          sed -i 's|^        view.setLook(dark, seed)$|        if (true) return false // 光效关闭\n        view.setLook(dark, seed)|' app/android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/phone/a11y/EdgeBeam.kt
++          echo "--- 补丁校验 ---"
+           grep -n 'minOpacity = ' app/lib/phone/phone_channel.dart
+           grep -n 'this.min = ' app/lib/ui/phone/phone_widgets.dart
+           grep -n 'MIN_OPACITY = ' app/android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/phone/a11y/OverlayPrefs.kt
++          grep -n -A1 'fun attach' app/android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/phone/a11y/EdgeBeam.kt
+ 
+       - name: Install host packages
+         run: |
