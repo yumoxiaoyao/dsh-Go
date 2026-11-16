@@ -21,6 +21,7 @@ jobs:
         with: {flutter-version: 3.47.7, channel: stable, cache: true}
       - uses: gradle/actions/setup-gradle@v4
         with: {gradle-version: 9.3.1}
+      - run: printf 'sdk.dir=%s\nflutter.sdk=%s\n' "$ANDROID_HOME" "$FLUTTER_ROOT" > app/android/local.properties
       - run: cd app/android && gradle wrapper --gradle-version 9.3.1
       - run: yes | sdkmanager --licenses >/dev/null || true; sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
       - run: bash runtime/build-runtime.sh arm64-v8a
